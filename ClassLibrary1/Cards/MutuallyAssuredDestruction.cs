@@ -1,6 +1,6 @@
 ﻿using ModdingUtils.Extensions;
-using System.Collections.Generic;
-using System.Linq;
+using Redo.MonoBehaviours;
+using UnboundLib;
 using UnboundLib.Cards;
 using UnityEngine;
 using static CardInfo;
@@ -8,35 +8,19 @@ using static CardInfo;
 
 namespace RedoNameSpace.Cards
 {
-    class SomeoneElsesProblem : CustomCard
+    class MutuallyAssuredDestruction : CustomCard
     {
-
-
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
-            cardInfo.GetAdditionalData().canBeReassigned = false;
-
+            statModifiers.movementSpeed = 2f;
+            statModifiers.health = 0.4f;
+            cardInfo.allowMultiple = false;
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            //Get random enemy.
-            List<Player> players = new List<Player>(PlayerManager.instance.players);
-            players.Remove(player);
-            Player randomEnemy = players[UnityEngine.Random.Range(0, players.Count)];
-
-            // Make a copy of currents cards.
-            var currentCardsCopy = data.currentCards.Where(card => card.GetAdditionalData().canBeReassigned).ToArray();
-
-            // Take enemy's cards
-            CardInfo[] enemyCards = randomEnemy.data.currentCards.Where(card => card.GetAdditionalData().canBeReassigned).ToArray();
-
-            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player);
-            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(player, enemyCards, false, null, null, null, true);
-
-            // Give enemy your cards.
-            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(randomEnemy);
-            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(randomEnemy, currentCardsCopy, false, null, null, null, true);
+            //Edits values on player when card is selected
+            player.gameObject.GetOrAddComponent<MutuallyAssuredDestructionEffect>();
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -46,11 +30,11 @@ namespace RedoNameSpace.Cards
 
         protected override string GetTitle()
         {
-            return "Someone Else's Problem";
+            return "Mutually Assured Destruction";
         }
         protected override string GetDescription()
         {
-            return "Swap all your cards with a those of a random player.";
+            return "Touching another player will kill you both.";
         }
         protected override GameObject GetCardArt()
         {
@@ -67,15 +51,22 @@ namespace RedoNameSpace.Cards
                 new CardInfoStat()
                 {
                     positive = true,
-                    stat = "Effect",
-                    amount = "No",
+                    stat = "Speed",
+                    amount = "+100%",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Health",
+                    amount = "-60%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.ColdBlue;
+            return CardThemeColor.CardThemeColorType.DestructiveRed;
         }
         public override string GetModName()
         {

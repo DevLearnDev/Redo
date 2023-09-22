@@ -10,11 +10,12 @@ namespace RedoNameSpace.Cards
 
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
-            statModifiers.health = 4f;
+            statModifiers.health = 3f;
             statModifiers.movementSpeed = 0.5f;
-            gun.attackSpeed = 0.1f;
+            gun.attackSpeed = 0.2f;
             gun.ammo = 200;
-            gun.bulletDamageMultiplier = 0.1f;
+            gun.bulletDamageMultiplier = 0.05f;
+            gun.spread = 0.05f;
 
             
             //Edits values on card itself, which are then applied to the player in `ApplyCardStats`
@@ -53,14 +54,14 @@ namespace RedoNameSpace.Cards
                 {
                     positive = true,
                     stat = "Health",
-                    amount = "+400%",
+                    amount = "+300%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
                 {
                     positive = true,
                     stat = "Attack Speed",
-                    amount = "+1000%",
+                    amount = "+500%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
@@ -74,7 +75,7 @@ namespace RedoNameSpace.Cards
                 {
                     positive = false,
                     stat = "Damage",
-                    amount = "-90%",
+                    amount = "-95%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 },
                 new CardInfoStat()
@@ -82,6 +83,13 @@ namespace RedoNameSpace.Cards
                     positive = false,
                     stat = "Movement Speed",
                     amount = "-50%",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned
+                },
+                new CardInfoStat()
+                {
+                    positive = false,
+                    stat = "Spread",
+                    amount = "+5%",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned
                 }
             };

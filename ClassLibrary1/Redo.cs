@@ -18,7 +18,7 @@ namespace RedoNameSpace
     {
         private const string ModId = "com.devmung.rounds.Redo";
         private const string ModName = "Redo";
-        public const string Version = "1.0.0"; // What version are we on (major.minor.patch)?
+        public const string Version = "1.0.1"; // What version are we on (major.minor.patch)?
         public const string ModInitials = "REDO";
 
         public static Redo instance { get; private set; }
@@ -35,8 +35,9 @@ namespace RedoNameSpace
             instance = this;
             CustomCard.BuildCard<BackToBasics>();
             CustomCard.BuildCard<FraternalTwins>();
-            CustomCard.BuildCard<SomeoneElsesProblem>();
             CustomCard.BuildCard<HeavyWeaponsGuy>();
+            CustomCard.BuildCard<SomeoneElsesProblem>();
+            CustomCard.BuildCard<MutuallyAssuredDestruction>();
         }
     }
 }
