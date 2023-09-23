@@ -1,0 +1,12 @@
+{
+    "name": "Redo",
+    "version_number": "1.0.2",
+    "website_url": "https://github.com/DevLearnDev/Redo",
+    "description": "A Rounds mod for manipulating your cards.",
+    "dependencies": [
+        "willis81808-UnboundLib-3.2.10",
+        "Pykess-CardChoiceSpawnUniqueCardPatch-0.1.9",
+        "Pykess-ModdingUtils-0.4.6",
+        "BepInEx-BepInExPack_ROUNDS-5.4.1900"
+    ]
+}

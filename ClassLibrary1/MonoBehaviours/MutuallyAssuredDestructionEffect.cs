@@ -1,15 +1,10 @@
-﻿using ModdingUtils.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Photon.Pun;
 using UnboundLib;
 using UnityEngine;
 using System.Reflection;
 using UnboundLib.Networking;
-using ModdingUtils.MonoBehaviours;
-using System.Runtime.CompilerServices;
 
 
 /*******************************************
@@ -23,6 +18,7 @@ namespace Redo.MonoBehaviours
     {
         private Player player;
         private readonly float range = 1.75f;
+        public ObjectsToSpawn? Explosion;
 
         void Awake()
         {
@@ -48,31 +44,33 @@ namespace Redo.MonoBehaviours
                     {
                         if (PhotonNetwork.OfflineMode)
                         {
-                            typeof(HealthHandler).InvokeMember("RPCA_Die",
-                                        BindingFlags.Instance | BindingFlags.InvokeMethod |
-                                        BindingFlags.NonPublic, null, otherPlayer.data.healthHandler,
-                                        new object[] { new Vector2(0, 1) });
+                            killPlayer(otherPlayer);
+
+                            Explosion.effect.GetComponent<Explosion>().damage = 1000;
+                            GameObject explosion = Instantiate(Explosion.effect, player.data.transform.position, Quaternion.identity);
+                            explosion.transform.localScale *= 5f;
+                            Destroy(explosion, 2);
 
                             Unbound.Instance.ExecuteAfterSeconds(0.1f, delegate
                             {
-                                typeof(HealthHandler).InvokeMember("RPCA_Die",
-                                            BindingFlags.Instance | BindingFlags.InvokeMethod |
-                                            BindingFlags.NonPublic, null, this.player.data.healthHandler,
-                                            new object[] { new Vector2(0, 1) });
-
+                                killPlayer(this.player);
                             });
                         }
 
                         else if (this.player.GetComponent<PhotonView>().IsMine)
                         {
                             NetworkingManager.RPC(typeof(MutuallyAssuredDestructionEffect), "RPCA_Explode", new object[] { otherPlayer.data.view.ControllerActorNr });
+
+                            Explosion.effect.GetComponent<Explosion>().damage = 1000;
+                            GameObject explosion = Instantiate(Explosion.effect, player.data.transform.position, Quaternion.identity);
+                            explosion.transform.localScale *= 5f;
+                            Destroy(explosion, 2);
+
                             Unbound.Instance.ExecuteAfterSeconds(0.1f, delegate
                             {
                                 NetworkingManager.RPC(typeof(MutuallyAssuredDestructionEffect), "RPCA_Explode", new object[] { this.player.data.view.ControllerActorNr });
                             });
                         }
-
-
                     }
                 }
             }
@@ -89,14 +87,23 @@ namespace Redo.MonoBehaviours
         [UnboundRPC]
         private static void RPCA_Explode(int actorID)
         {
-            Player playerToEffect = (Player)typeof(PlayerManager).InvokeMember("GetPlayerWithActorID",
+            Player victim = (Player)typeof(PlayerManager).InvokeMember("GetPlayerWithActorID",
                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                     BindingFlags.NonPublic, null, PlayerManager.instance, new object[] { actorID });
 
-            typeof(HealthHandler).InvokeMember("RPCA_Die",
+            killPlayer(victim);
+            
+        }
+
+        private static void killPlayer(Player player)
+        {
+            if (player != null)
+            {
+                typeof(HealthHandler).InvokeMember("RPCA_Die",
                         BindingFlags.Instance | BindingFlags.InvokeMethod |
-                        BindingFlags.NonPublic, null, playerToEffect.data.healthHandler,
+                        BindingFlags.NonPublic, null, player.data.healthHandler,
                         new object[] { new Vector2(0, 1) });
+            }
         }
     }
 }

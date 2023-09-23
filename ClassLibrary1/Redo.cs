@@ -1,8 +1,6 @@
-﻿using UnboundLib;
-using UnboundLib.Cards;
+﻿using UnboundLib.Cards;
 using RedoNameSpace.Cards;
 using HarmonyLib;
-using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using BepInEx;
 
 namespace RedoNameSpace
